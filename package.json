@@ -1,0 +1,26 @@
+{
+  "name": "anchorage-sample",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/sign-request.js",
+  "types": "dist/sign-request.d.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test-sign-request": "tsx test/sign-request.test.ts",
+    "test-verify-webhook": "tsx test/verify-webhook.test.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  }
+}
