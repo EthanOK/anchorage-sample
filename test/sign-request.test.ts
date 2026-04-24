@@ -1,8 +1,9 @@
-import test from "node:test";
+import { describe, expect, it } from "vitest";
 import "dotenv/config";
 import { createApiSignature } from "../src/sign-request.js";
 
-test("createApiSignature: sign deposit-attributions request", async () => {
+describe("createApiSignature", () => {
+it("sign deposit-attributions request", async () => {
   const depositTransactionId = "f9fbc6d89de557729f373fd18843e99e";
   const timestampEpochSeconds = Math.floor(Date.now() / 1000);
   const httpMethod = "PATCH";
@@ -24,6 +25,7 @@ test("createApiSignature: sign deposit-attributions request", async () => {
     httpRequestPath,
     httpBody,
   });
+  expect(sig).toBeTruthy();
 
   const apiAccessKey = process.env.API_ACCESS_KEY ?? "<API_ACCESS_KEY>";
   const curl = `curl --request ${httpMethod} \\
@@ -37,13 +39,13 @@ test("createApiSignature: sign deposit-attributions request", async () => {
   console.log(curl);
 });
 
-test("createApiSignature: sign create-withdrawal BTC request", async () => {
+it("sign create-withdrawal BTC request", async () => {
   const timestampEpochSeconds = Math.floor(Date.now() / 1000);
   const httpMethod = "POST";
   const httpRequestPath = `/v2/transactions/withdrawal`;
 
   const requestBody = {
-    amount: "0.003",
+    amount: "0.002",
     assetType: "BTC_S",
     description: "Refund of temporary deposit",
     destination: {
@@ -52,7 +54,7 @@ test("createApiSignature: sign create-withdrawal BTC request", async () => {
     },
     source: {
       type: "WALLET",
-      id: "7f01103b995483501ed48ccfb9268f14",
+      id: "b0a7bf109dc8b553c0f6ea486489a7df",
     },
     withdrawalAmlQuestionnaire: {
       destinationType: "SELFHOSTED_WALLET",
@@ -77,6 +79,7 @@ test("createApiSignature: sign create-withdrawal BTC request", async () => {
     httpRequestPath,
     httpBody,
   });
+  expect(sig).toBeTruthy();
   const apiAccessKey = process.env.API_ACCESS_KEY ?? "<API_ACCESS_KEY>";
   const curl = `curl --request ${httpMethod} \\
   --url https://api.anchorage-staging.com${httpRequestPath} \\
@@ -90,7 +93,7 @@ test("createApiSignature: sign create-withdrawal BTC request", async () => {
   console.log(curl);
 });
 
-test("createApiSignature: sign create-withdrawal ETH request", async () => {
+it("sign create-withdrawal ETH request", async () => {
   const timestampEpochSeconds = Math.floor(Date.now() / 1000);
   const httpMethod = "POST";
   const httpRequestPath = `/v2/transactions/withdrawal`;
@@ -131,6 +134,7 @@ test("createApiSignature: sign create-withdrawal ETH request", async () => {
     httpRequestPath,
     httpBody,
   });
+  expect(sig).toBeTruthy();
   const apiAccessKey = process.env.API_ACCESS_KEY ?? "<API_ACCESS_KEY>";
   const curl = `curl --request ${httpMethod} \\
   --url https://api.anchorage-staging.com${httpRequestPath} \\
@@ -144,7 +148,7 @@ test("createApiSignature: sign create-withdrawal ETH request", async () => {
   console.log(curl);
 });
 
-test("createApiSignature: sign create-withdrawal USDC request", async () => {
+it("sign create-withdrawal USDC request", async () => {
   const timestampEpochSeconds = Math.floor(Date.now() / 1000);
   const httpMethod = "POST";
   const httpRequestPath = `/v2/transactions/withdrawal`;
@@ -185,6 +189,7 @@ test("createApiSignature: sign create-withdrawal USDC request", async () => {
     httpRequestPath,
     httpBody,
   });
+  expect(sig).toBeTruthy();
   const apiAccessKey = process.env.API_ACCESS_KEY ?? "<API_ACCESS_KEY>";
   const curl = `curl --request ${httpMethod} \\
   --url https://api.anchorage-staging.com${httpRequestPath} \\
@@ -196,4 +201,5 @@ test("createApiSignature: sign create-withdrawal USDC request", async () => {
   --data '${httpBody}'`;
 
   console.log(curl);
+});
 });
