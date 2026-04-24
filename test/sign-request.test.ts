@@ -3,7 +3,7 @@ import "dotenv/config";
 import { createApiSignature } from "../src/sign-request.js";
 
 test("createApiSignature: sign deposit-attributions request", async () => {
-  const depositTransactionId = "906d24ff5fec512f0df1b95fe0a1a648";
+  const depositTransactionId = "f9fbc6d89de557729f373fd18843e99e";
   const timestampEpochSeconds = Math.floor(Date.now() / 1000);
   const httpMethod = "PATCH";
   const httpRequestPath = `/v2/deposit-attributions/${depositTransactionId}`;
@@ -25,29 +25,38 @@ test("createApiSignature: sign deposit-attributions request", async () => {
     httpBody,
   });
 
-  console.log("timestamp:", timestampEpochSeconds);
-  console.log("signature:", sig);
+  const apiAccessKey = process.env.API_ACCESS_KEY ?? "<API_ACCESS_KEY>";
+  const curl = `curl --request ${httpMethod} \\
+  --url https://api.anchorage-staging.com${httpRequestPath} \\
+  --header 'Api-Access-Key: ${apiAccessKey}' \\
+  --header 'Api-Signature: ${sig}' \\
+  --header 'Api-Timestamp: ${timestampEpochSeconds}' \\
+  --header 'accept: application/json' \\
+  --header 'content-type: application/json' \\
+  --data '${httpBody}'`;
+  console.log(curl);
 });
 
-test("createApiSignature: sign create-withdrawal request", async () => {
+test("createApiSignature: sign create-withdrawal BTC request", async () => {
   const timestampEpochSeconds = Math.floor(Date.now() / 1000);
   const httpMethod = "POST";
   const httpRequestPath = `/v2/transactions/withdrawal`;
 
-  const httpBody = JSON.stringify({
-    amount: "1",
-    assetType: "ETHHOODI",
+  const requestBody = {
+    amount: "0.003",
+    assetType: "BTC_S",
     description: "Refund of temporary deposit",
     destination: {
       type: "ADDRESS",
-      id: "0x6278A1E803A76796a3A1f7F6344fE874ebfe94B2",
+      id: "tb1qup358hl6xfumst8tz4q2l9hjfe7ek253ah0u6z",
     },
     source: {
       type: "WALLET",
-      id: "62b40dd019871e85901ab417bb91925c",
+      id: "7f01103b995483501ed48ccfb9268f14",
     },
     withdrawalAmlQuestionnaire: {
       destinationType: "SELFHOSTED_WALLET",
+      selfhostedDescription: "AAAA",
       originatorType: "MY_ORGANIZATION",
       purpose: "TRADING_SETTLEMENT",
       recipientType: "PERSON",
@@ -55,7 +64,10 @@ test("createApiSignature: sign create-withdrawal request", async () => {
       recipientFirstName: "Bob",
       recipientCountry: "HK",
     },
-  });
+  };
+
+  // IMPORTANT: signature must match the exact bytes sent in the request body
+  const httpBody = JSON.stringify(requestBody, null, 2);
   const signingKey = process.env.SIGNING_KEY;
   if (!signingKey) throw new Error("SIGNING_KEY is required");
   const sig = createApiSignature({
@@ -65,6 +77,123 @@ test("createApiSignature: sign create-withdrawal request", async () => {
     httpRequestPath,
     httpBody,
   });
-  console.log("timestamp:", timestampEpochSeconds);
-  console.log("signature:", sig);
+  const apiAccessKey = process.env.API_ACCESS_KEY ?? "<API_ACCESS_KEY>";
+  const curl = `curl --request ${httpMethod} \\
+  --url https://api.anchorage-staging.com${httpRequestPath} \\
+  --header 'Api-Access-Key: ${apiAccessKey}' \\
+  --header 'Api-Signature: ${sig}' \\
+  --header 'Api-Timestamp: ${timestampEpochSeconds}' \\
+  --header 'accept: application/json' \\
+  --header 'content-type: application/json' \\
+  --data '${httpBody}'`;
+
+  console.log(curl);
+});
+
+test("createApiSignature: sign create-withdrawal ETH request", async () => {
+  const timestampEpochSeconds = Math.floor(Date.now() / 1000);
+  const httpMethod = "POST";
+  const httpRequestPath = `/v2/transactions/withdrawal`;
+
+  const requestBody = {
+    amount: "0.001",
+    assetType: "ETHSEP",
+    description: "Refund of temporary deposit",
+    destination: {
+      type: "ADDRESS",
+      id: "0x6278A1E803A76796a3A1f7F6344fE874ebfe94B2",
+    },
+    source: {
+      type: "WALLET",
+      id: "79b79d70bd77e4c5afaec83d891db6b3",
+    },
+    // useGasStation: true,
+    withdrawalAmlQuestionnaire: {
+      destinationType: "SELFHOSTED_WALLET",
+      selfhostedDescription: "AAAA",
+      originatorType: "MY_ORGANIZATION",
+      purpose: "TRADING_SETTLEMENT",
+      recipientType: "PERSON",
+      recipientLastName: "Li",
+      recipientFirstName: "Bob",
+      recipientCountry: "HK",
+    },
+  };
+
+  // IMPORTANT: signature must match the exact bytes sent in the request body
+  const httpBody = JSON.stringify(requestBody, null, 2);
+  const signingKey = process.env.SIGNING_KEY;
+  if (!signingKey) throw new Error("SIGNING_KEY is required");
+  const sig = createApiSignature({
+    signingKey,
+    timestampEpochSeconds,
+    httpMethod,
+    httpRequestPath,
+    httpBody,
+  });
+  const apiAccessKey = process.env.API_ACCESS_KEY ?? "<API_ACCESS_KEY>";
+  const curl = `curl --request ${httpMethod} \\
+  --url https://api.anchorage-staging.com${httpRequestPath} \\
+  --header 'Api-Access-Key: ${apiAccessKey}' \\
+  --header 'Api-Signature: ${sig}' \\
+  --header 'Api-Timestamp: ${timestampEpochSeconds}' \\
+  --header 'accept: application/json' \\
+  --header 'content-type: application/json' \\
+  --data '${httpBody}'`;
+
+  console.log(curl);
+});
+
+test("createApiSignature: sign create-withdrawal USDC request", async () => {
+  const timestampEpochSeconds = Math.floor(Date.now() / 1000);
+  const httpMethod = "POST";
+  const httpRequestPath = `/v2/transactions/withdrawal`;
+
+  const requestBody = {
+    amount: "0.1",
+    assetType: "USDC_SEPOLIA",
+    description: "Refund of temporary deposit",
+    destination: {
+      type: "ADDRESS",
+      id: "0x6278A1E803A76796a3A1f7F6344fE874ebfe94B2",
+    },
+    source: {
+      type: "WALLET",
+      id: "79b79d70bd77e4c5afaec83d891db6b3",
+    },
+    // useGasStation: true,
+    withdrawalAmlQuestionnaire: {
+      destinationType: "SELFHOSTED_WALLET",
+      selfhostedDescription: "AAAA",
+      originatorType: "MY_ORGANIZATION",
+      purpose: "TRADING_SETTLEMENT",
+      recipientType: "PERSON",
+      recipientLastName: "Li",
+      recipientFirstName: "Bob",
+      recipientCountry: "HK",
+    },
+  };
+
+  // IMPORTANT: signature must match the exact bytes sent in the request body
+  const httpBody = JSON.stringify(requestBody, null, 2);
+  const signingKey = process.env.SIGNING_KEY;
+  if (!signingKey) throw new Error("SIGNING_KEY is required");
+  const sig = createApiSignature({
+    signingKey,
+    timestampEpochSeconds,
+    httpMethod,
+    httpRequestPath,
+    httpBody,
+  });
+  const apiAccessKey = process.env.API_ACCESS_KEY ?? "<API_ACCESS_KEY>";
+  const curl = `curl --request ${httpMethod} \\
+  --url https://api.anchorage-staging.com${httpRequestPath} \\
+  --header 'Api-Access-Key: ${apiAccessKey}' \\
+  --header 'Api-Signature: ${sig}' \\
+  --header 'Api-Timestamp: ${timestampEpochSeconds}' \\
+  --header 'accept: application/json' \\
+  --header 'content-type: application/json' \\
+  --data '${httpBody}'`;
+
+  console.log(curl);
 });
