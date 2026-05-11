@@ -23,7 +23,11 @@ export interface VerifyWebhookParams {
   signature: string;
 }
 
-export function verifyWebhookMessage({ message, publicKeyHex, signature }: VerifyWebhookParams): boolean {
+export function verifyWebhookMessage({
+  message,
+  publicKeyHex,
+  signature,
+}: VerifyWebhookParams): boolean {
   const publicKey = parsePublicKeyHex(publicKeyHex);
   const sigBytes = parseSignature(signature);
   const messageBytes = decodeUTF8(message);
@@ -31,12 +35,15 @@ export function verifyWebhookMessage({ message, publicKeyHex, signature }: Verif
 }
 
 function isHex(s: string): boolean {
-  return typeof s === "string" && s.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(s);
+  return (
+    typeof s === "string" && s.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(s)
+  );
 }
 
 function hexToBytes(hex: string): Uint8Array {
   const out = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  for (let i = 0; i < out.length; i++)
+    out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
   return out;
 }
 

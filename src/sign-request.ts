@@ -6,12 +6,15 @@ import path from "node:path";
 const { decodeBase64, decodeUTF8 } = naclUtil;
 
 function isHex(s: string): boolean {
-  return typeof s === "string" && s.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(s);
+  return (
+    typeof s === "string" && s.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(s)
+  );
 }
 
 function hexToBytes(hex: string): Uint8Array {
   const out = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  for (let i = 0; i < out.length; i++)
+    out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
   return out;
 }
 
@@ -39,14 +42,17 @@ export function createApiSignature({
   httpBody = "",
 }: CreateApiSignatureParams): string {
   if (!signingKey) throw new Error("signingKey is required");
-  if (!timestampEpochSeconds) throw new Error("timestampEpochSeconds is required");
+  if (!timestampEpochSeconds)
+    throw new Error("timestampEpochSeconds is required");
   if (!httpMethod) throw new Error("httpMethod is required");
   if (!httpRequestPath) throw new Error("httpRequestPath is required");
 
   const msg = `${timestampEpochSeconds}${String(httpMethod).toUpperCase()}${httpRequestPath}${httpBody}`;
   const messageBytes = decodeUTF8(msg);
 
-  const keyBytes = isHex(signingKey) ? hexToBytes(signingKey) : decodeBase64(signingKey);
+  const keyBytes = isHex(signingKey)
+    ? hexToBytes(signingKey)
+    : decodeBase64(signingKey);
   let secretKey: Uint8Array;
   if (keyBytes.length === nacl.sign.secretKeyLength) {
     secretKey = keyBytes;
@@ -64,7 +70,8 @@ export function createApiSignature({
 
 const isMain =
   process.argv[1] != null &&
-  path.resolve(fileURLToPath(import.meta.url)) === path.resolve(process.argv[1]);
+  path.resolve(fileURLToPath(import.meta.url)) ===
+    path.resolve(process.argv[1]);
 
 if (isMain) {
   const timestampEpochSeconds = Math.floor(Date.now() / 1000);

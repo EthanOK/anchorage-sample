@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
     "test-sign-request": "vitest run test/sign-request.test.ts ",
-    "test-verify-webhook": "tsx test/verify-webhook.test.ts"
+    "test-verify-webhook": "tsx test/verify-webhook.test.ts",
+    "format": "prettier --write ."
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "tsx": "^4.19.3",
+    "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "vitest": "^4.1.5"
   }
