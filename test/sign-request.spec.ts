@@ -202,4 +202,49 @@ describe("createApiSignature", () => {
 
     console.log(curl);
   });
+
+  it("sign internal transfer ETH request", async () => {
+    const timestampEpochSeconds = Math.floor(Date.now() / 1000);
+    const httpMethod = "POST";
+    const httpRequestPath = `/v2/transfers`;
+
+    const requestBody = {
+      amount: "0.0009",
+      assetType: "ETHHOODI",
+      destination: {
+        type: "WALLET",
+        id: "62b40dd019871e85901ab417bb91925c",
+      },
+      deductFeeFromAmountIfSameType: false,
+      source: {
+        type: "WALLET",
+        id: "213d99a63533952d05515f9f9c34091a",
+      },
+      useGasStation: true,
+    };
+
+    // IMPORTANT: signature must match the exact bytes sent in the request body
+    const httpBody = JSON.stringify(requestBody, null, 2);
+    const signingKey = process.env.SIGNING_KEY;
+    if (!signingKey) throw new Error("SIGNING_KEY is required");
+    const sig = createApiSignature({
+      signingKey,
+      timestampEpochSeconds,
+      httpMethod,
+      httpRequestPath,
+      httpBody,
+    });
+    expect(sig).toBeTruthy();
+    const apiAccessKey = process.env.API_ACCESS_KEY ?? "<API_ACCESS_KEY>";
+    const curl = `curl --request ${httpMethod} \\
+  --url https://api.anchorage-staging.com${httpRequestPath} \\
+  --header 'Api-Access-Key: ${apiAccessKey}' \\
+  --header 'Api-Signature: ${sig}' \\
+  --header 'Api-Timestamp: ${timestampEpochSeconds}' \\
+  --header 'accept: application/json' \\
+  --header 'content-type: application/json' \\
+  --data '${httpBody}'`;
+
+    console.log(curl);
+  });
 });

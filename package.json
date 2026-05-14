@@ -8,8 +8,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
-    "test-sign-request": "vitest run test/sign-request.test.ts ",
-    "test-verify-webhook": "tsx test/verify-webhook.test.ts",
+    "test-sign-request": "vitest run test/sign-request.spec.ts ",
+    "test-verify-webhook": "tsx test/verify-webhook.spec.ts",
     "format": "prettier --write ."
   },
   "author": "",
